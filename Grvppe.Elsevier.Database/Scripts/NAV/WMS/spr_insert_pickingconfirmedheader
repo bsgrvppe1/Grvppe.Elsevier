@@ -1,0 +1,66 @@
+USE [$(NAVDatabaseName)]
+GO
+
+/* StoredProcedure [dbo].[sp_insert_pickingconfirmedheader]    */
+
+IF EXISTS (SELECT name FROM sysobjects WHERE name = 'sp_insert_pickingconfirmedheader' AND type = 'P')
+   DROP PROCEDURE sp_insert_pickingconfirmedheader 
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[sp_insert_pickingconfirmedheader]
+(
+	@TIPOREG [varchar](1),
+	@EXTERNORDERKEY [varchar](20),
+	@ORDERDATE [datetime],
+	@DELIVERYDATE [datetime],
+	@CCOMPANY [varchar](50),
+	@PICKINGNO [varchar](30),
+	@TRANSPORTEDQUANTITY [decimal](38,20),
+	@SPECIE [varchar](10),
+	@GROSSWHT [decimal](38,20),
+	@NETWHT [decimal](38,20)
+)
+AS
+BEGIN
+
+INSERT INTO [$(PickingConfirmedTableName)]
+	([TIPOREG],
+	[EXTERNORDERKEY],
+	[ORDERDATE],
+	[DELIVERYDATE],
+	[CCOMPANY],
+	[PICKINGNO],
+	[TRANSPORTEDQUANTITY],
+	[SPECIE],
+	[GROSSWHT],
+	[NETWHT],
+	[Status],
+	[Rejection Reason],
+	[Receive Date],
+	[Receive Time])
+VALUES
+	(@TIPOREG,
+	@EXTERNORDERKEY,
+	@ORDERDATE,
+	@DELIVERYDATE,
+	@CCOMPANY,
+	@PICKINGNO,
+	ISNULL(@TRANSPORTEDQUANTITY, 0),
+	ISNULL(@SPECIE, ''),
+	ISNULL(@GROSSWHT, 0),
+	ISNULL(@NETWHT, 0),
+	0,
+	'',
+	CONVERT(date, GETDATE()),
+	CONVERT(time, GETDATE()) )
+
+END
+GO
+
+
