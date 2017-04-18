@@ -1,0 +1,87 @@
+-- NAV Database
+USE [$(NAVDatabaseName)]
+GO
+
+
+IF EXISTS (SELECT name FROM sysobjects WHERE name = 'sp_insert_ESVIntegrationCustomer' AND type = 'P')
+   DROP PROCEDURE sp_insert_ESVIntegrationCustomer 
+GO
+
+CREATE PROCEDURE sp_insert_ESVIntegrationCustomer
+(
+	@CNPJCPF nvarchar(20),
+	@ExternalNo nvarchar(20),
+	@Name nvarchar(50),
+	@Name2 nvarchar(50),
+	@Address nvarchar(50),
+	@Address2 nvarchar(50),
+	@City nvarchar(30),
+	@District nvarchar(30),
+	@Number nvarchar(60),
+	@TerritoryCode nvarchar(2),
+	@CountryRegionCode nvarchar(10),
+	@PostCode nvarchar(20),
+	@IBGECityCode nvarchar(20),
+	@PhoneNo nvarchar(30),
+	@FaxNo nvarchar(30),
+	@EMail nvarchar(80),
+	@LineOperationType nvarchar(1),
+	@CustomerType nvarchar(1),
+	@IE nvarchar(20)
+)
+AS BEGIN
+
+	-- Mudar para a companhia cadastrada no NAV
+	IF NOT EXISTS (SELECT [CNPJ_CPF] FROM [$(IntegCustTableName)] WHERE [CNPJ_CPF] = @CNPJCPF)
+		INSERT INTO [$(IntegCustTableName)]
+			([CNPJ_CPF]
+           ,[External No_]
+           ,[Name]
+		   ,[Name 2]
+           ,[Address]
+           ,[Address 2]
+           ,[City]
+		   ,[District]
+		   ,[Number]
+		   ,[Territory Code]
+		   ,[Country_Region Code]
+		   ,[Post Code]
+		   ,[IBGE City Code]
+           ,[Phone No_]           
+		   ,[Fax No_]
+           ,[E-Mail]
+           ,[Line Operation Type]
+           ,[Customer Type]
+           ,[IE]
+           ,[Last Date Modified]
+           ,[NAV No_]
+           ,[Status]
+           ,[Rejection Reason])
+		VALUES (@CNPJCPF, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 0, '')
+
+	-- Mudar para a companhia cadastrada no NAV
+	UPDATE [$(IntegCustTableName)]
+	SET [External No_]			= ISNULL(@ExternalNo, '')
+		,[Name]					= ISNULL(@Name, '')
+		,[Name 2]				= ISNULL(@Name2, '')
+		,[Address]				= ISNULL(@Address, '')
+		,[Address 2]			= ISNULL(@Address2, '')
+		,[City]					= ISNULL(UPPER(@City), '')
+		,[District]				= ISNULL(UPPER(@District), '')
+		,[Number]				= ISNULL(@Number, '')
+		,[Territory Code]		= ISNULL(@TerritoryCode, '')
+		,[Country_Region Code]	= ISNULL(@CountryRegionCode, '')
+		,[Post Code]			= ISNULL(@PostCode, '')
+		,[IBGE City Code]		= ISNULL(@IBGECityCode, '')
+		,[Phone No_]			= ISNULL(@PhoneNo, '')
+		,[Fax No_]				= ISNULL(@FaxNo, '')
+		,[E-Mail]				= ISNULL(@EMail, '')
+		,[Line Operation Type]	= ISNULL(@LineOperationType, '')
+		,[Customer Type]		= ISNULL(@CustomerType, '')
+		,[IE]					= ISNULL(@IE, '')
+		,[Last Date Modified]	= CONVERT(DATE, GETDATE())
+		,[NAV No_]				= ''
+		,[Status]				= 0
+		,[Rejection Reason]		= ''
+	WHERE [CNPJ_CPF] = @CNPJCPF
+END
