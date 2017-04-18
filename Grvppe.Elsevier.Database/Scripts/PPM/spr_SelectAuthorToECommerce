@@ -1,0 +1,23 @@
+USE [PPM_TO_NAVISION]
+GO
+
+
+IF EXISTS (SELECT name FROM sysobjects WHERE name = 'spr_SelectAuthorToECommerce' AND type = 'P')
+   DROP PROCEDURE spr_SelectAuthorToECommerce 
+GO
+
+
+CREATE PROCEDURE spr_SelectAuthorToECommerce
+(
+	@EanCode [varchar](30)
+)
+AS BEGIN
+
+	SELECT
+		 HOLDERS.[SORT_NO]		AS 'SORT_NO'
+		,HOLDERS.[FIRST_NAME]	AS 'FIRST_NAME'
+		,HOLDERS.[NAME]			AS 'LAST_NAME'
+    FROM [COPYRIGHT_HOLDER] AS HOLDERS
+	WHERE HOLDERS.[EAN_CODE] = @EanCode   
+
+END
